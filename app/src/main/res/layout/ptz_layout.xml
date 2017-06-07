@@ -7,11 +7,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_weight="1">
 
 
@@ -23,7 +27,8 @@
             <io.vov.vitamio.widget.CenterLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:layout_weight="1">
 
                 <SurfaceView
                     android:id="@+id/surfaceView"
@@ -32,7 +37,14 @@
                     android:layout_gravity="center" >
                 </SurfaceView>
             </io.vov.vitamio.widget.CenterLayout>
-        </RelativeLayout>
+
+            <TextureView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/surface"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -77,6 +89,74 @@
                 android:layout_alignTop="@id/ptz_home"
                 android:layout_toRightOf="@id/ptz_home"
                 android:text="@string/ptz_right" />
+
+            <Button
+                android:text="Send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSend"
+                android:layout_alignBaseline="@+id/ptz_down"
+                android:layout_alignBottom="@+id/ptz_down"
+                android:layout_toRightOf="@+id/ptz_home"
+                android:layout_toEndOf="@+id/ptz_home" />
+
+            <Button
+                android:text="Set Preset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSetPreset"
+                android:layout_above="@+id/ptz_home"
+                android:layout_alignLeft="@+id/ptz_left"
+                android:layout_alignStart="@+id/ptz_left"
+                android:layout_toLeftOf="@+id/ptz_home"
+                android:layout_toStartOf="@+id/ptz_home"
+                android:layout_alignTop="@+id/ptz_up" />
+
+            <Button
+                android:text="Go to Preset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnGoToPreset"
+                android:layout_toLeftOf="@+id/ptz_home"
+                android:layout_below="@+id/ptz_home"
+                android:layout_alignBottom="@+id/ptz_down"
+                android:layout_alignLeft="@+id/ptz_left"
+                android:layout_alignStart="@+id/ptz_left" />
+
+            <Button
+                android:id="@+id/btnAbsMove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Abs Move"
+                android:layout_above="@+id/ptz_right"
+                android:layout_toRightOf="@+id/ptz_home"
+                android:layout_toEndOf="@+id/ptz_home" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detect"
+                android:id="@+id/btn_detect"
+                android:layout_alignTop="@+id/btnGoToPreset"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/btnGoToPreset"
+                android:layout_toStartOf="@+id/btnGoToPreset"
+                android:layout_alignBottom="@+id/btnGoToPreset" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Motion"
+                android:id="@+id/btn_motion"
+                android:layout_below="@+id/ptz_right"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/btnSend"
+                android:layout_toEndOf="@+id/btnSend"
+                android:layout_alignBottom="@+id/btnSend" />
 
         </RelativeLayout>
 

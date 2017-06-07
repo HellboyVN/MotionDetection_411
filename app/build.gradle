@@ -17,10 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.+'
@@ -29,12 +30,11 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     //compile 'me.neavo:vitamio:4.2.2'
     compile project(':vitamio')
-
     compile files('libs/ksoap2-android-assembly-3.6.1-jar-with-dependencies.jar')
     compile files('libs/xstream-1.4.7.jar')
     compile files('libs/btcommunicate.jar')
     compile files('libs/datadroid.jar')
     compile files('libs/json-lib-2.4-jdk15.jar')
     compile files('libs/gson-2.2.4.jar')
-
+    compile project(':openCVLibrary2411')
 }

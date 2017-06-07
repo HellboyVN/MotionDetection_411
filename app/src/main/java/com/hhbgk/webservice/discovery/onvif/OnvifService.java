@@ -10,7 +10,9 @@ import android.util.Log;
 
 import com.hhbgk.webservice.discovery.data.model.CameraInfo;
 import com.hhbgk.webservice.discovery.data.model.PtzNode;
+import com.hhbgk.webservice.discovery.data.model.PtzPreset;
 import com.hhbgk.webservice.discovery.data.model.PtzSpaceInfo;
+import com.hhbgk.webservice.discovery.data.model.PtzVector;
 import com.hhbgk.webservice.discovery.data.model.ServiceInfo;
 import com.hhbgk.webservice.discovery.data.model.StreamInfo;
 import com.hhbgk.webservice.discovery.util.Dbug;
@@ -65,18 +67,24 @@ public class OnvifService {
     private final static int WS_DISCOVERY_PORT = 3702;
     private final static String WS_DISCOVERY_ADDRESS_IPv4 = "239.255.255.250";
     private final  String WS_DISCOVERY_PROBE_MESSAGE =
-   "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"><s:Header><a:Action s:mustUnderstand=\"1\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action><a:MessageID>uuid:21859bf9-6193-4c8a-ad50-d082e6d296ab</a:MessageID><a:ReplyTo><a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address></a:ReplyTo><a:To s:mustUnderstand=\"1\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To></s:Header><s:Body><Probe xmlns=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\"><d:Types xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\" xmlns:dp0=\"http://www.onvif.org/ver10/network/wsdl\">dp0:NetworkVideoTransmitter</d:Types></Probe></s:Body></s:Envelope>";
-//            createProbeMessage(UUID.randomUUID().toString());
-//            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" " +
-//            "xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" " +
-//            "xmlns:tns=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\">" +
-//            "<soap:Header><wsa:Action>http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</wsa:Action>" +
-//            "<wsa:MessageID>urn:uuid:c032cfdd-c3ca-49dc-820e-ee6696ad63e2</wsa:MessageID>" +
-//            "<wsa:To>urn:schemas-xmlsoap-org:ws:2005:04:discovery</wsa:To></soap:Header>" +
-//            "<soap:Body><tns:Probe/></soap:Body></soap:Envelope>";
+           "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">" +
+                   "<s:Header><a:Action s:mustUnderstand=\"1\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>" +
+                   "<a:MessageID>uuid:21859bf9-6193-4c8a-ad50-d082e6d296ab</a:MessageID><a:ReplyTo>" +
+                   "<a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address>" +
+                   "</a:ReplyTo><a:To s:mustUnderstand=\"1\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To>" +
+                   "</s:Header><s:Body><Probe xmlns=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\">" +
+                   "<d:Types xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\" xmlns:dp0=\"http://www.onvif.org/ver10/network/wsdl\">dp0:NetworkVideoTransmitter</d:Types></Probe>" +
+                   " <wsdl:SetPreset>\n" +
+                   "        <wsdl:ProfileToken>?</wsdl:ProfileToken>\n" +
+                   "        <wsdl:PresetName>?</wsdl:PresetName>\n" +
+                   "        <wsdl:PresetToken>?</wsdl:PresetToken>\n" +
+                   "    </wsdl:SetPreset></s:Body></s:Envelope>";
+    //          createProbeMessage(UUID.randomUUID().toString());
+
     private static final Random random = new SecureRandom();
 
     private final Handler mHandler;
+
 
     private static final int MSG_PROBE_WEB_SERVICE = 100;
     private static final int MSG_GET_SERVICES = 101;
@@ -86,10 +94,12 @@ public class OnvifService {
     private static final int MSG_SET_PTZ_CONTINUOUS_MOVE_DOWN = 201;
     private static final int MSG_SET_PTZ_CONTINUOUS_MOVE_LEFT = 202;
     private static final int MSG_SET_PTZ_CONTINUOUS_MOVE_RIGHT = 203;
-    private static final int MSG_PTZ_GOTO_HOME_POSITION = 300;
-    private static final int MSG_PTZ_GOTO_PRESET = 302;
-    private static final int MSG_PTZ_GET_PRESET = 303;
+    private static final int MSG_PTZ_SET_PRESET = 300;
+    private static final int MSG_PTZ_GO_TO_PRESET = 302;
+    private static final int MSG_PTZ_GET_PRESETS = 303;
     private static final int MSG_STOP_PTZ_CONTINUOUS_MOVE = 301;
+    private static final int MSG_PTZ_ABSOLUTE_MOVE = 400;
+    private static final int MSG_PTZ_GOTO_HOME_POSITION = 401;
 
     private String createProbeMessage(String uuid) {
         StringBuffer sb = new StringBuffer();
@@ -107,6 +117,11 @@ public class OnvifService {
         sb.append("<Types>dn:NetworkVideoTransmitter</Types>");
         sb.append("<Scopes />");
         sb.append("</Probe>");
+        sb.append(" <wsdl:SetPreset>\n" +
+                "        <wsdl:ProfileToken>?</wsdl:ProfileToken>\n" +
+                "        <wsdl:PresetName>?</wsdl:PresetName>\n" +
+                "        <wsdl:PresetToken>?</wsdl:PresetToken>\n" +
+                "    </wsdl:SetPreset>");
         sb.append("</Body>");
         sb.append("</Envelope>");
         return sb.toString();
@@ -141,11 +156,13 @@ public class OnvifService {
                     case MSG_SET_PTZ_CONTINUOUS_MOVE_UP:
                     case MSG_SET_PTZ_CONTINUOUS_MOVE_DOWN:
                     case MSG_STOP_PTZ_CONTINUOUS_MOVE:
-                    case MSG_PTZ_GOTO_HOME_POSITION:
+                    case MSG_PTZ_SET_PRESET:
                     case MSG_SET_PTZ_CONTINUOUS_MOVE_RIGHT:
-                    case MSG_PTZ_GOTO_PRESET:
-                    case MSG_PTZ_GET_PRESET:
+                    case MSG_PTZ_GO_TO_PRESET:
+                    case MSG_PTZ_GET_PRESETS:
+                    case MSG_PTZ_GOTO_HOME_POSITION:
                     case MSG_SET_PTZ_CONTINUOUS_MOVE_LEFT:
+                    case MSG_PTZ_ABSOLUTE_MOVE:
                         postRequest(msg);
                         break;
                 }
@@ -165,23 +182,27 @@ public class OnvifService {
         }
         Bundle bundle = msg.getData();
         String deviceService = bundle.getString("service_url");
+        //deviceService="http://192.168.0.112:5000/onvif/device_service";
         String namespace = bundle.getString("name_space");
         String soapAction = bundle.getString("soap_action");
         String methodName =bundle.getString("method_name");
 
-        Log.e(tag, "soapAction=" + soapAction + "\nnameSpace=" + namespace + "\nmethodName" + methodName);
+        Log.e(tag, "soapAction=" + soapAction + "\nnameSpace=" + namespace + "\nmethodName=" + methodName+ "\nURL: "+deviceService);
         SoapObject soapObject = new SoapObject(namespace, methodName);
         packageRequest(soapObject, msg, namespace);
 
+
+        Log.e("levan","testtttt");
         final SoapSerializationEnvelope soapSerializationEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
         soapSerializationEnvelope.bodyOut = soapObject;
-        soapSerializationEnvelope.dotNet = false;
+        soapSerializationEnvelope.dotNet = true;
         soapSerializationEnvelope.implicitTypes = true;
+        soapSerializationEnvelope.setOutputSoapObject(soapObject);
         soapSerializationEnvelope.setAddAdornments(false);
 
         soapSerializationEnvelope.headerOut = new Element[1];
-        soapSerializationEnvelope.headerOut[0] = createHeader(soapSerializationEnvelope, "admin", "ktttlab411");
-
+        soapSerializationEnvelope.headerOut[0] = createHeader(soapSerializationEnvelope, "3522442", "123");
+        //soapSerializationEnvelope.headerOut[0]=new Element().createElement("nameSpace", namespace);
         final HttpTransportSE httpSe = new HttpTransportSE(deviceService, 5000);
         try {
             httpSe.call(soapAction, soapSerializationEnvelope);
@@ -192,12 +213,15 @@ public class OnvifService {
         Object response = null;
         try {
             response = soapSerializationEnvelope.getResponse();
+            Log.e("Results = ", String.valueOf(response));
+            SoapPrimitive response1 = (SoapPrimitive) soapSerializationEnvelope.getResponse();
+            Log.i("jsonarray = ",""+String.valueOf(response1));
         } catch (SoapFault soapFault) {
-            soapFault.printStackTrace();
+            Log.e("E", soapFault.toString());
         }
 
         if (response instanceof SoapFault) {
-          final  SoapFault fault = (SoapFault) soapSerializationEnvelope.bodyIn;
+            final  SoapFault fault = (SoapFault) soapSerializationEnvelope.bodyIn;
             Exception ex = new Exception(fault.faultstring);
             String faultInformation = "Request fault:" + ex.getMessage() + ", fault code:" + fault.faultcode;
             if (msg.obj instanceof OnGetMediaServiceListener) {
@@ -208,14 +232,25 @@ public class OnvifService {
                 ((OnProbeListener)msg.obj).onFailure(faultInformation);
             } else if (msg.obj instanceof OnGetPtzServiceListener) {
                 ((OnGetPtzServiceListener)msg.obj).onFailure(faultInformation);
+            } else if (msg.obj instanceof OnGetPtzPresetListener) {
+                ((OnGetPtzPresetListener)msg.obj).onFailure(faultInformation);
             }
 
         } else if (response instanceof SoapPrimitive) {
             SoapPrimitive soapPrimitive = (SoapPrimitive) response;
             Dbug.e(tag, "soapPrimitive="+ soapPrimitive.getName());
         }
+        SoapObject result = null;
+        if (soapSerializationEnvelope.bodyIn instanceof SoapFault) {
+            String str= ((SoapFault) soapSerializationEnvelope.bodyIn).faultstring;
+            Log.e("Loi: ", str);
 
-        SoapObject result = (SoapObject) soapSerializationEnvelope.bodyIn;
+        } else {
+            result = (SoapObject) soapSerializationEnvelope.bodyIn;
+            Log.e("WS", String.valueOf(result));
+        }
+
+
 
 
         if (result != null && result.getPropertyCount() > 0) {
@@ -231,31 +266,32 @@ public class OnvifService {
      * @param msg 信息
      * @param namespace 命名空间
      */
+
     private void packageRequest(SoapObject soapObject, Message msg, String namespace) {
-        SoapObject tempSoapObject, attributeSoapObject;
+        SoapObject tempSoapObject, attributeSoapObject, vectorSoapObject, tempSoapObject1;
         String ttNamespace = "http://www.onvif.org/ver10/schema";
         switch (msg.what) {
             case MSG_GET_SERVICES:
                 soapObject.addProperty(namespace, "IncludeCapability", "false");
                 break;
             case MSG_GET_MEDIA_SERVICE:
+
                 tempSoapObject = new SoapObject(namespace, "StreamSetup");
+                tempSoapObject.addProperty(ttNamespace, "Stream", "RTP-Unicast");
 
                 SoapObject transportSoapObject = new SoapObject();
                 transportSoapObject.addProperty(ttNamespace, "Protocol", "UDP");
-
-                tempSoapObject.addProperty(ttNamespace, "Transport", transportSoapObject);
-                tempSoapObject.addProperty(ttNamespace, "Stream", "RTP-Unicast");
+                tempSoapObject.addProperty(ttNamespace, "Transport", tempSoapObject);
 
                 soapObject.addSoapObject(tempSoapObject);
-                soapObject.addProperty(namespace, "ProfileToken", "PROFILE_000");
+                soapObject.addProperty(namespace, "ProfileToken", "IPCProfilesToken0");
                 break;
 
             case MSG_SET_PTZ_CONTINUOUS_MOVE_UP:
-                soapObject.addProperty(namespace, "ProfileToken", "PROFILE_000");
+                soapObject.addProperty(namespace, "ProfileToken", "IPCProfilesToken0");
 
                 attributeSoapObject = new SoapObject();
-                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace");
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/VelocityGenericSpace");
                 attributeSoapObject.addAttribute("y", "-0.5");
                 attributeSoapObject.addAttribute("x", "0");
 
@@ -265,10 +301,10 @@ public class OnvifService {
                 break;
 
             case MSG_SET_PTZ_CONTINUOUS_MOVE_DOWN:
-                soapObject.addProperty(namespace, "ProfileToken", "PROFILE_000");
+                soapObject.addProperty(namespace, "ProfileToken", "IPCProfilesToken0");
 
                 attributeSoapObject = new SoapObject();
-                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace");
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/VelocityGenericSpace");
                 attributeSoapObject.addAttribute("y", "0.5");
                 attributeSoapObject.addAttribute("x", "0");
 
@@ -278,10 +314,10 @@ public class OnvifService {
                 break;
 
             case MSG_SET_PTZ_CONTINUOUS_MOVE_LEFT:
-                soapObject.addProperty("ProfileToken", "PROFILE_000");
+                soapObject.addProperty("ProfileToken", "IPCProfilesToken0");
 
                 attributeSoapObject = new SoapObject();
-                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace");
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/VelocityGenericSpace");
                 attributeSoapObject.addAttribute("x", "-0.5");
                 attributeSoapObject.addAttribute("y", "0");
 
@@ -291,11 +327,11 @@ public class OnvifService {
                 break;
 
             case MSG_SET_PTZ_CONTINUOUS_MOVE_RIGHT:
-                soapObject.addProperty("ProfileToken", "PROFILE_000");
+                soapObject.addProperty("ProfileToken", "IPCProfilesToken0");
 
                 attributeSoapObject = new SoapObject();
-                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace");
-                attributeSoapObject.addAttribute("x", "0.5");
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/VelocityGenericSpace");
+                attributeSoapObject.addAttribute("x", "10");
                 attributeSoapObject.addAttribute("y", "0");
 
                 tempSoapObject = new SoapObject(namespace, "Velocity");
@@ -304,40 +340,90 @@ public class OnvifService {
                 break;
 
             case MSG_STOP_PTZ_CONTINUOUS_MOVE:
-                soapObject.addProperty(namespace, "ProfileToken", "PROFILE_000");
-                soapObject.addProperty(namespace, "PanTilt", "true");
+                soapObject.addProperty(namespace, "ProfileToken", "IPCProfilesToken0");
+                soapObject.addProperty(namespace, "PanTilt", "false");
                 soapObject.addProperty(namespace, "Zoom", "false");
                 break;
 
-            case MSG_PTZ_GOTO_PRESET:
-                soapObject.addProperty("ProfileToken", "PROFILE_000");
-                soapObject.addProperty("PresetToken", "PRESET_000");
-//                attributeSoapObject = new SoapObject();
-//                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace");
-//                attributeSoapObject.addAttribute("y", "0");
-//                attributeSoapObject.addAttribute("x", "0");
-//
-//                tempSoapObject = new SoapObject(namespace, "Speed");
-//                tempSoapObject.addProperty(ttNamespace, "PanTilt", attributeSoapObject);
-//                soapObject.addSoapObject(tempSoapObject);
-                break;
-            case MSG_PTZ_GET_PRESET:
-                soapObject.addProperty("ProfileToken", "PROFILE_000");
             case MSG_PTZ_GOTO_HOME_POSITION:
-                soapObject.addProperty( "ProfileToken", "PROFILE_000");
-               // soapObject.addProperty(namespace, "PresetToken", "PRESET_000");
-               // soapObject.addProperty(namespace, "PresetName ", "van");
-//                attributeSoapObject = new SoapObject();
-//                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver10/tptz/PanTiltSpaces/TranslationGenericSpace");
-//                attributeSoapObject.addAttribute("y", "0");
-//                attributeSoapObject.addAttribute("x", "0");
+                soapObject.addProperty("ProfileToken", "IPCProfilesToken0");
+ 
+                attributeSoapObject = new SoapObject();
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/VelocityGenericSpace");
+                attributeSoapObject.addAttribute("y", "0.5");
+                attributeSoapObject.addAttribute("x", "0");
+ 
+                tempSoapObject = new SoapObject();
+                tempSoapObject.addProperty("PanTilt", attributeSoapObject);
+                soapObject.addProperty("Speed", tempSoapObject);
+                break;    
 
-              //  tempSoapObject = new SoapObject(namespace, "Speed");
-              //  tempSoapObject.addProperty(ttNamespace, "GotoHomePosition", attributeSoapObject);
-              //  soapObject.addSoapObject(tempSoapObject);
+            case MSG_PTZ_GO_TO_PRESET:
+                soapObject.addProperty("ProfileToken", "IPCProfilesToken0");
+                soapObject.addProperty("PresetToken","PresetToken");
+
+                attributeSoapObject = new SoapObject();
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/PositionGenericSpace");
+                SoapObject xSoapObject = new SoapObject();
+                SoapObject ySoapObject = new SoapObject();
+                xSoapObject.addAttribute("Min", "-1.0");
+                xSoapObject.addAttribute("Max", "1.0");
+                ySoapObject.addAttribute("Min", "-1.0");
+                ySoapObject.addAttribute("Max", "1.0");
+                attributeSoapObject.addAttribute("XRange", xSoapObject);
+                attributeSoapObject.addAttribute("YRange", ySoapObject);
+
+                tempSoapObject = new SoapObject(namespace, "Speed");
+                tempSoapObject.addProperty(ttNamespace, "PanTilt", attributeSoapObject);
+                soapObject.addSoapObject(tempSoapObject);
+
                 break;
+            case MSG_PTZ_GET_PRESETS:
+                PropertyInfo AppDevId =new PropertyInfo();
+                AppDevId.name = "ProfileToken";
+                AppDevId.setValue("IPCProfilesToken0");
+                soapObject.addProperty(AppDevId);
+                Log.e("AppDevId = ", "" + AppDevId);
+               // soapObject.addProperty(namespace,"ProfileToken", "IPCProfilesToken0");
+                break;
+            case MSG_PTZ_SET_PRESET:
+                PropertyInfo AppDevId1 =new PropertyInfo();
+                AppDevId1.name = "ProfileToken";
+                AppDevId1.setValue("IPCProfilesToken0");
+                soapObject.addProperty(AppDevId1);
+                //soapObject.addProperty(namespace,"ProfileToken", "IPCProfilesToken0");
+                Log.e("AppDevId = ", "" + AppDevId1);
+              Log.e("setpreset: ", "van: " + namespace);
+               // soapObject.addProperty(namespace,"PresetToken ", "DEVICE_001");
+                break;
+            case MSG_PTZ_ABSOLUTE_MOVE:
+                soapObject.addProperty(namespace,"ProfileToken", "IPCProfilesToken0");
+//
+                vectorSoapObject = new SoapObject();
+                vectorSoapObject.addProperty("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/PositionGenericSpace");
+                vectorSoapObject.addProperty("x", "11");
+                vectorSoapObject.addProperty("y", "1");
+                tempSoapObject = new SoapObject(namespace, "Position");
+                //tempSoapObject.addProperty(ttNamespace, "PanTilt", vectorSoapObject);
+                soapObject.addSoapObject(tempSoapObject);
+
+                attributeSoapObject = new SoapObject();
+                attributeSoapObject.addAttribute("space", "http://www.onvif.org/ver20/tptz/PanTiltSpaces/PositionGenericSpace");
+                attributeSoapObject.addAttribute("x", "1");
+                attributeSoapObject.addAttribute("y", "1");
+                //attributeSoapObject.addAttribute("XRange", xSoapObject1);
+               // attributeSoapObject.addAttribute("YRange", ySoapObject1);
+
+                tempSoapObject1 = new SoapObject(namespace, "Speed");
+                tempSoapObject1.addProperty(ttNamespace, "PanTilt", attributeSoapObject);
+                soapObject.addSoapObject(tempSoapObject1);
+
+
         }
     }
+
+    public List<PtzPreset> ptzPresetList;
+    public PtzPreset savePtzPreset;
 
     private void parseResponse(SoapObject result, Message msg) {
         switch (msg.what) {
@@ -408,11 +494,57 @@ public class OnvifService {
                     }
                 }
                 Dbug.w(tag, "ptzServiceList size=" + ptzServiceList.size());
-                OnGetPtzServiceListener listener = (OnGetPtzServiceListener) msg.obj;
-                if (listener != null) {
-                    listener.onSuccess(ptzServiceList);
+                OnGetPtzServiceListener onGetPtzServiceListener = (OnGetPtzServiceListener) msg.obj;
+                if (onGetPtzServiceListener != null) {
+                    onGetPtzServiceListener.onSuccess(ptzServiceList);
                 }
                 break;
+//            case MSG_PTZ_SET_PRESET:
+//
+//                SoapObject ptzPresetObject = (SoapObject) result.getProperty(0);
+//
+//                savePtzPreset.setToken(ptzPresetObject.getPrimitivePropertySafely("PresetToken").toString());
+//
+//                Log.i("Preset =  ", savePtzPreset.getToken());
+//                savePtzPreset.setName("DEVICE_001");
+//
+//                OnGetPtzPresetListener onGetPtzPresetListener = (OnGetPtzPresetListener) msg.obj;
+//                if (onGetPtzPresetListener != null) {
+//                    onGetPtzPresetListener.onSuccess(ptzPresetList);
+//                }
+//                break;
+            case MSG_PTZ_GET_PRESETS:
+                ptzPresetList = new ArrayList<>();
+                for (int i = 0; i < result.getPropertyCount(); i++){
+                    List<PtzVector> ptzPositionList = new ArrayList<PtzVector>() ;
+                    SoapObject presetObject = (SoapObject) result.getProperty(i);
+                    PtzPreset ptzPresetInList = new PtzPreset();
+                    ptzPresetInList.setToken(String.valueOf(presetObject.getPrimitivePropertySafely("token")));
+                    ptzPresetInList.setName(String.valueOf(presetObject.getPrimitivePropertySafely("Name")));
+                    SoapObject positionList = (SoapObject) presetObject.getPropertySafely("PTZPosition");
+                    for(int j = 0; j < positionList.getPropertyCount(); j++){
+                        PtzVector ptzVector = new PtzVector();
+                        SoapObject vector = (SoapObject) positionList.getProperty(j);
+                        if(vector.hasProperty("x")){
+                            ptzVector.setX(Float.parseFloat(String.valueOf(vector.getPrimitivePropertySafely("x"))));
+                        }
+                        if(vector.hasProperty("y")){
+                            ptzVector.setY(Float.parseFloat(String.valueOf(vector.getPrimitivePropertySafely("y"))));
+                        }
+                        Log.e("Preset", ptzVector.toString());
+                        ptzPositionList.add(ptzVector);
+
+
+
+                    }
+                    ptzPresetInList.setPtzPosition(ptzPositionList);
+                    Log.e("ListPreset", ptzPresetInList.toString());
+
+                    ptzPresetList.add(ptzPresetInList);
+                }
+
+
+
         }
     }
 
@@ -420,7 +552,7 @@ public class OnvifService {
         String securityNamespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
         Element header = new Element().createElement(securityNamespace, "Security");
         header.setPrefix("wsse", securityNamespace);
-        header.setAttribute(envelope.env, "mustUnderstand", "true");
+        header.setAttribute(envelope.env, "mustUnderstand", "false");
 
         String created = getCreated();
         String nonce = getNonce();
@@ -470,6 +602,10 @@ public class OnvifService {
 
     public interface OnGetPtzServiceListener {
         void onSuccess(List<PtzNode> ptzNodeInfoList);
+        void onFailure(String message);
+    }
+    public interface OnGetPtzPresetListener {
+        void onSuccess(List<PtzPreset> ptzNodeInfoList);
         void onFailure(String message);
     }
 
@@ -537,7 +673,19 @@ public class OnvifService {
         message.setData(bundle);
         mHandler.sendMessageDelayed(message, 200);
     }
-
+	 public void requestPtzGotoHomePosition(String serviceURL, OnGetPtzServiceListener listener) {
+        mHandler.removeMessages(MSG_PTZ_GOTO_HOME_POSITION);
+        Message message = Message.obtain();
+        message.what = MSG_PTZ_GOTO_HOME_POSITION;
+        message.obj = listener;
+        Bundle bundle = new Bundle();
+        bundle.putString("service_url", serviceURL);
+        bundle.putString("name_space", "http://www.onvif.org/ver20/ptz/wsdl");
+        bundle.putString("soap_action", "http://www.onvif.org/ver20/ptz/wsdl/GotoHomePosition");
+        bundle.putString("method_name", "GotoHomePosition");
+        message.setData(bundle);
+        mHandler.sendMessageDelayed(message, 200);
+    }
     public void requestPtzContinuousMoveDown(String serviceURL, OnGetPtzServiceListener listener) {
         mHandler.removeMessages(MSG_SET_PTZ_CONTINUOUS_MOVE_DOWN);
         Message message = Message.obtain();
@@ -594,23 +742,24 @@ public class OnvifService {
         mHandler.sendMessageDelayed(message, 200);
     }
 
-    public void requestPtzGotoHomePosition(String serviceURL, OnGetPtzServiceListener listener) {
-        mHandler.removeMessages(MSG_PTZ_GOTO_HOME_POSITION);
+    public void requestPtzSetPreset(String serviceURL, OnGetPtzPresetListener listener){
+        mHandler.removeMessages(MSG_PTZ_GO_TO_PRESET);
         Message message = Message.obtain();
-        message.what = MSG_PTZ_GOTO_HOME_POSITION;
+        message.what = MSG_PTZ_GO_TO_PRESET;
         message.obj = listener;
         Bundle bundle = new Bundle();
         bundle.putString("service_url", serviceURL);
         bundle.putString("name_space", "http://www.onvif.org/ver20/ptz/wsdl");
-        bundle.putString("soap_action", "http://www.onvif.org/ver20/ptz/wsdl/SetPreset");
-        bundle.putString("method_name", "SetPreset");
+        bundle.putString("soap_action", "http://www.onvif.org/ver20/ptz/wsdl/GotoPreset" );
+        bundle.putString("method_name", "GotoPreset");
         message.setData(bundle);
         mHandler.sendMessageDelayed(message, 200);
+
     }
-    public void requestPtzGotoPreset(String serviceURL, OnGetPtzServiceListener listener){
-        mHandler.removeMessages(MSG_PTZ_GOTO_PRESET);
+    public void requestPtzGotoPreset(String serviceURL, OnGetPtzPresetListener listener){
+        mHandler.removeMessages(MSG_PTZ_GO_TO_PRESET);
         Message message = Message.obtain();
-        message.what = MSG_PTZ_GOTO_PRESET;
+        message.what = MSG_PTZ_GO_TO_PRESET;
         message.obj = listener;
         Bundle bundle = new Bundle();
         bundle.putString("service_url", serviceURL);
@@ -620,18 +769,32 @@ public class OnvifService {
         message.setData(bundle);
         mHandler.sendMessageDelayed(message, 200);
     }
-    public void requestPtzGetPreset(String serviceURL, OnGetPtzServiceListener listener){
-        mHandler.removeMessages(MSG_PTZ_GET_PRESET);
+    public void requestPtzGetPreset(String serviceURL, OnGetPtzPresetListener listener){
+        mHandler.removeMessages(MSG_PTZ_GET_PRESETS);
         Message message = Message.obtain();
-        message.what = MSG_PTZ_GET_PRESET;
+        message.what = MSG_PTZ_GET_PRESETS;
         message.obj = listener;
         Bundle bundle = new Bundle();
         bundle.putString("service_url", serviceURL);
         bundle.putString("name_space", "http://www.onvif.org/ver20/ptz/wsdl");
         bundle.putString("soap_action", "http://www.onvif.org/ver20/ptz/wsdl/GetPresets");
-        bundle.putString("method_name", "GetPreset");
+        bundle.putString("method_name", "GetPresets");
         message.setData(bundle);
         mHandler.sendMessageDelayed(message, 200);
+    }
+    public void requestPtzAbsoluteMove(String serviceURL, OnGetPtzServiceListener listener){
+        mHandler.removeMessages(MSG_PTZ_ABSOLUTE_MOVE);
+        Message message = Message.obtain();
+        message.what = MSG_PTZ_ABSOLUTE_MOVE;
+        message.obj = listener;
+        Bundle bundle = new Bundle();
+        bundle.putString("service_url", serviceURL);
+        bundle.putString("name_space", "http://www.onvif.org/ver20/ptz/wsdl");
+        bundle.putString("soap_action", "http://www.onvif.org/ver20/ptz/wsdl/AbsoluteMove");
+        bundle.putString("method_name", "AbsoluteMove");
+        message.setData(bundle);
+        mHandler.sendMessageDelayed(message, 200);
+
     }
 
     private Collection<InetAddress> getLoopAddress() {

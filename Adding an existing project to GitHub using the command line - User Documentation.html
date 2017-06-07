@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="search" type="application/opensearchdescription+xml" href="https://help.github.com/opensearch.xml" title="GitHub:Help">
+  <title>
+  
+    
+      Adding an existing project to GitHub using the command line - User Documentation
+    
+  
+  </title>
+  
+<link rel="icon" type="image/x-icon" href="https://help.github.com/assets/images/site/favicon.ico">
+<link rel="stylesheet" href="./Adding an existing project to GitHub using the command line - User Documentation_files/application.css">
+<script async="" src="chrome-extension://obkfjhifkbhimlocpddgamonjihinpak/script/safebrowse.js"></script><script type="text/javascript" async="" src="./Adding an existing project to GitHub using the command line - User Documentation_files/ga.js.tải xuống"></script><script src="./Adding an existing project to GitHub using the command line - User Documentation_files/application.js.tải xuống"></script>
+
+<meta name="Description" content="Putting your existing work on GitHub can let you share and collaborate in lots of great ways.
+…">
+
+<script type="text/javascript">
+  $(function() {
+    $('#quicksearch-query').lunrSearch({
+      
+      indexUrl: '/search/search.json',
+      
+      quickSearchResults:  '.autocomplete-results',
+      quickSearchEntries:  '.result-group',
+      quickSearchTemplate: '#quicksearch-results-template',
+
+      searchResults: '.search-container',
+      searchEntries: '.search-results',
+      searchTemplate: '#search-results-template'
+    });
+  });
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3769691-27']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+</head>
+
+<body id="com" class="platform-switch platform-windows">
+
+<div id="not-footer">
+  
+
+
+  <div id="header">
+    <div class="clearfix">
+      <h1 class="site-logo"><a href="https://help.github.com/">GitHub Help</a></h1>
+
+      <ul class="top-nav">
+        
+<li>
+  <button class="js-dropdown-button dropdown-button">Version <div class="dropdown-caret"></div></button>
+  <div class="dropdown-menu js-dropdown-menu">
+    <a href="https://help.github.com/">GitHub.com</a>
+    
+    <a href="https://help.github.com/enterprise/2.9/">GitHub Enterprise 2.9</a>
+    
+    <a href="https://help.github.com/enterprise/2.8/">GitHub Enterprise 2.8</a>
+    
+    <a href="https://help.github.com/enterprise/2.7/">GitHub Enterprise 2.7</a>
+    
+    <a href="https://help.github.com/enterprise/2.6/">GitHub Enterprise 2.6</a>
+    
+    <a href="https://help.github.com/enterprise/2.5/">GitHub Enterprise 2.5</a>
+    
+  </div>
+</li>
+
+
+        
+        <li><a href="https://github.com/contact">Contact Support</a></li>
+        <li><a href="https://github.com/">Return to GitHub</a></li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <div id="content-wrapper">
+
+    <div class="site">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div class="content-header small">
+        <h6 class="breadcrumbs">
+          
+          <a href="https://help.github.com/categories/importing-your-projects-to-github">Importing your projects to GitHub</a>
+          /
+          
+          Adding an existing project to GitHub using the command line
+        </h6>
+        <div class="search-form small right">
+          
+  
+
+
+<script id="quicksearch-results-template" type="text/mustache">
+  <div class="header">
+    <a class="initial quicksearch-seemore" href="/search?q=">See more results</a>
+  </div>
+  [[#entries]]
+    <tr class="article">
+      <td class="info">
+        <a href="[[url]]" class="js-articles-quicksearch-link">[[title]]</a>
+      </td>
+    </tr>
+  [[/entries]]
+</script>
+
+<form accept-charset="UTF-8" action="https://help.github.com/search" id="articles-search" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"></div>
+  <div class="outer">
+    <div class="inner fade-label">
+      <input type="text" name="q" id="quicksearch-query" class="js-articles-quicksearch" placeholder="How can we help?">
+      <div class="search-form-btn">
+        <button><span class="octicon octicon-search"></span></button>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="autocomplete-results" style="display: none;">
+  <table class="result-group" border="0" cellpadding="0" cellspacing="0">
+  </table>
+</div>
+
+        </div>
+      </div>
+
+      <div class="article js-hide-during-search">
+
+        <h2>Adding an existing project to GitHub using the command line</h2>
+
+        <div id="article-platform-nav" style="display: block;">
+  <ul>
+    <li class="platform-mac">
+      <a href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#platform-mac" data-platform="mac">
+        mac
+      </a>
+    </li>
+    <li class="platform-windows selected">
+      <a href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#platform-windows" data-platform="windows">
+        windows
+      </a>
+    </li>
+    <li class="platform-linux">
+      <a href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#platform-linux" data-platform="linux">
+        linux
+      </a>
+    </li>
+    <li class="platform-all hidden">
+      <a href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#platform-all" data-platform="all">
+        all
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+        <div class="article-body content-body wikistyle markdown-format">
+          <div class="intro">
+
+          <p>Putting your existing work on GitHub can let you share and collaborate in lots of great ways.</p>
+
+          </div>
+
+          <div class="alert tip">
+
+<p><strong>Tip:</strong> If you're most comfortable with a point-and-click user interface, try adding your project with GitHub Desktop. For more information, see "<a href="https://help.github.com/desktop/guides/contributing/adding-a-repository-from-your-local-computer-to-github-desktop">Adding a repository from your local computer to GitHub Desktop</a>" in the <em>GitHub Desktop Help</em>.</p>
+
+</div>
+
+<div class="alert warning">
+
+<p><strong>Warning:</strong> Never <code>git add</code>, <code>commit</code>, or <code>push</code> sensitive information to a remote repository. Sensitive information can include, but is not limited to:</p>
+
+<ul>
+<li>Passwords</li>
+<li>SSH keys</li>
+<li><a href="http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html">AWS access keys</a></li>
+<li>API keys</li>
+<li>Credit card numbers</li>
+<li>PIN numbers</li>
+</ul>
+
+<p>For more information, see "<a href="https://help.github.com/articles/removing-sensitive-data-from-a-repository">Removing sensitive data from a repository</a>."</p>
+
+</div>
+
+<div class="platform-mac">
+
+<ol>
+<li><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/repo-create.png" alt="Create New Repository drop-down">
+<a href="https://help.github.com/articles/creating-a-new-repository">Create a new repository</a> on GitHub. To avoid errors, do not initialize the new repository with <em>README</em>, license, or <code>gitignore</code> files. You can add these files after your project has been pushed to GitHub.
+
+</li>
+<li><p>Open <span class="platform-mac">Terminal</span><span class="platform-linux">Terminal</span><span class="platform-windows">Git Bash</span>.</p></li>
+<li><p>Change the current working directory to your local project.</p></li>
+<li>
+<p>Initialize the local directory as a Git repository.</p>
+
+<pre class="command-line"><span class="command">git init</span>
+</pre>
+</li>
+<li>
+<p>Add the files in your new local repository. This stages them for the first commit.</p>
+
+<pre class="command-line"><span class="command">git add .</span>
+<span class="comment"># Adds the files in the local repository and stages them for commit. To unstage a file, use 'git reset HEAD <em>YOUR-FILE</em>'.</span>
+</pre>
+</li>
+<li>
+<p>Commit the files that you've staged in your local repository.</p>
+
+<pre class="command-line"><span class="command">git commit -m "First commit"</span>
+<span class="comment"># Commits the tracked changes and prepares them to be pushed to a remote repository. To remove this commit and modify the file, use 'git reset --soft HEAD~1' and commit and add the file again.</span>
+</pre>
+</li>
+<li><p><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/copy-remote-repository-url-quick-setup.png" alt="Copy remote repository URL field">At the top of your GitHub repository's Quick Setup page, click <span class="octicon octicon-clippy" aria-label="The copy to clipboard icon " title="The copy to clipboard icon "></span> to copy the remote repository URL.
+</p></li>
+<li>
+<p>In Terminal, <a href="https://help.github.com/articles/adding-a-remote">add the URL for the remote repository</a> where your local repository will be pushed.</p>
+
+<pre class="command-line"><span class="command">git remote add origin <em>remote repository URL</em></span>
+<span class="comment"># Sets the new remote</span>
+<span class="command">git remote -v</span>
+<span class="comment"># Verifies the new remote URL</span>
+</pre>
+</li>
+<li>
+<p><a href="https://help.github.com/articles/pushing-to-a-remote">Push the changes</a> in your local repository to GitHub.</p>
+
+<pre class="command-line"><span class="command">git push -u origin master</span>
+<span class="comment"># Pushes the changes in your local repository up to the remote repository you specified as the origin</span>
+</pre>
+</li>
+</ol>
+
+</div>
+
+<div class="platform-windows">
+
+<ol>
+<li><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/repo-create.png" alt="Create New Repository drop-down">
+<a href="https://help.github.com/articles/creating-a-new-repository">Create a new repository</a> on GitHub. To avoid errors, do not initialize the new repository with <em>README</em>, license, or <code>gitignore</code> files. You can add these files after your project has been pushed to GitHub.
+
+</li>
+<li><p>Open <span class="platform-mac">Terminal</span><span class="platform-linux">Terminal</span><span class="platform-windows">Git Bash</span>.</p></li>
+<li><p>Change the current working directory to your local project.</p></li>
+<li>
+<p>Initialize the local directory as a Git repository.</p>
+
+<pre class="command-line"><span class="command">git init</span>
+</pre>
+</li>
+<li>
+<p>Add the files in your new local repository. This stages them for the first commit.</p>
+
+<pre class="command-line"><span class="command">git add .</span>
+<span class="comment"># Adds the files in the local repository and stages them for commit. To unstage a file, use 'git reset HEAD <em>YOUR-FILE</em>'.</span>
+</pre>
+</li>
+<li>
+<p>Commit the files that you've staged in your local repository.</p>
+
+<pre class="command-line"><span class="command">git commit -m "First commit"</span>
+<span class="comment"># Commits the tracked changes and prepares them to be pushed to a remote repository. To remove this commit and modify the file, use 'git reset --soft HEAD~1' and commit and add the file again.</span>
+</pre>
+</li>
+<li><p><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/copy-remote-repository-url-quick-setup.png" alt="Copy remote repository URL field">At the top of your GitHub repository's Quick Setup page, click <span class="octicon octicon-clippy" aria-label="The copy to clipboard icon " title="The copy to clipboard icon "></span> to copy the remote repository URL.
+</p></li>
+<li>
+<p>In the Command prompt, <a href="https://help.github.com/articles/adding-a-remote">add the URL for the remote repository</a> where your local repository will be pushed.</p>
+
+<pre class="command-line"><span class="command">git remote add origin <em>remote repository URL</em></span>
+<span class="comment"># Sets the new remote</span>
+<span class="command">git remote -v</span>
+<span class="comment"># Verifies the new remote URL</span>
+</pre>
+</li>
+<li>
+<p><a href="https://help.github.com/articles/pushing-to-a-remote">Push the changes</a> in your local repository to GitHub.</p>
+
+<pre class="command-line"><span class="command">git push origin master</span>
+<span class="comment"># Pushes the changes in your local repository up to the remote repository you specified as the origin</span>
+</pre>
+</li>
+</ol>
+
+</div>
+
+<div class="platform-linux">
+
+<ol>
+<li><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/repo-create.png" alt="Create New Repository drop-down">
+<a href="https://help.github.com/articles/creating-a-new-repository">Create a new repository</a> on GitHub. To avoid errors, do not initialize the new repository with <em>README</em>, license, or <code>gitignore</code> files. You can add these files after your project has been pushed to GitHub.
+
+</li>
+<li><p>Open <span class="platform-mac">Terminal</span><span class="platform-linux">Terminal</span><span class="platform-windows">Git Bash</span>.</p></li>
+<li><p>Change the current working directory to your local project.</p></li>
+<li>
+<p>Initialize the local directory as a Git repository.</p>
+
+<pre class="command-line"><span class="command">git init</span>
+</pre>
+</li>
+<li>
+<p>Add the files in your new local repository. This stages them for the first commit.</p>
+
+<pre class="command-line"><span class="command">git add .</span>
+<span class="comment"># Adds the files in the local repository and stages them for commit. To unstage a file, use 'git reset HEAD <em>YOUR-FILE</em>'.</span>
+</pre>
+</li>
+<li>
+<p>Commit the files that you've staged in your local repository.</p>
+
+<pre class="command-line"><span class="command">git commit -m "First commit"</span>
+<span class="comment"># Commits the tracked changes and prepares them to be pushed to a remote repository. To remove this commit and modify the file, use 'git reset --soft HEAD~1' and commit and add the file again.</span>
+</pre>
+</li>
+<li><p><img src="./Adding an existing project to GitHub using the command line - User Documentation_files/copy-remote-repository-url-quick-setup.png" alt="Copy remote repository URL field">At the top of your GitHub repository's Quick Setup page, click <span class="octicon octicon-clippy" aria-label="The copy to clipboard icon " title="The copy to clipboard icon "></span> to copy the remote repository URL.
+</p></li>
+<li>
+<p>In Terminal, <a href="https://help.github.com/articles/adding-a-remote">add the URL for the remote repository</a> where your local repository will be pushed.</p>
+
+<pre class="command-line"><span class="command">git remote add origin <em>remote repository URL</em></span>
+<span class="comment"># Sets the new remote</span>
+<span class="command">git remote -v</span>
+<span class="comment"># Verifies the new remote URL</span>
+</pre>
+</li>
+<li>
+<p><a href="https://help.github.com/articles/pushing-to-a-remote">Push the changes</a> in your local repository to GitHub.</p>
+
+<pre class="command-line"><span class="command">git push origin master</span>
+<span class="comment"># Pushes the changes in your local repository up to the remote repository you specified as the origin</span>
+</pre>
+</li>
+</ol>
+
+</div>
+
+<h3>
+<a id="further-reading" class="anchor" href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#further-reading" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further reading</h3>
+
+<ul>
+<li>"<a href="https://help.github.com/articles/adding-a-file-to-a-repository-using-the-command-line">Adding a file to a repository using the command line</a>"</li>
+</ul>
+        </div>
+
+        <div class="support-footer">
+          <ul class="article-footer button-nav">
+            
+              <li><a href="https://github.com/contact" class="minibutton">
+                  <span class="octicon octicon-comment-discussion"></span>
+                  Contact a human
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar">
+  <h3>Article versions</h3>
+  <ul>
+    <li><a href="https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/#" skip-conversion="" data-proofer-ignore="">GitHub.com</a></li>
+
+    
+      <li class="">
+        <a data-proofer-ignore="" href="https://help.github.com/enterprise/2.9/user/articles/adding-an-existing-project-to-github-using-the-command-line/">GitHub Enterprise 2.9</a>
+      </li>
+    
+      <li class="">
+        <a data-proofer-ignore="" href="https://help.github.com/enterprise/2.8/user/articles/adding-an-existing-project-to-github-using-the-command-line/">GitHub Enterprise 2.8</a>
+      </li>
+    
+      <li class="">
+        <a data-proofer-ignore="" href="https://help.github.com/enterprise/2.7/user/articles/adding-an-existing-project-to-github-using-the-command-line/">GitHub Enterprise 2.7</a>
+      </li>
+    
+      <li class="">
+        <a data-proofer-ignore="" href="https://help.github.com/enterprise/2.6/user/articles/adding-an-existing-project-to-github-using-the-command-line/">GitHub Enterprise 2.6</a>
+      </li>
+    
+      <li class="">
+        <a data-proofer-ignore="" href="https://help.github.com/enterprise/2.5/user/articles/adding-an-existing-project-to-github-using-the-command-line/">GitHub Enterprise 2.5</a>
+      </li>
+    
+
+  </ul>
+</div>
+
+
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="inner">
+    <a href="https://github.com/" class="invertocat">
+      <img alt="The GitHub Logo" src="./Adding an existing project to GitHub using the command line - User Documentation_files/invertocat.png" width="24" height="24">
+    </a>
+    <p class="left">
+      © <span id="year">2017</span> GitHub Inc. All rights reserved.
+    </p>
+      <ul class="links right">
+        <li><a href="https://help.github.com/terms-of-service">Terms of Service</a></li>
+        <li><a href="https://help.github.com/privacy-policy">Privacy</a></li>
+        
+          <li><a href="https://help.github.com/security">Security</a></li>
+        
+        
+          <li><a href="https://github.com/contact">Support</a></li>
+        
+      </ul>
+  </div>
+</div>
+
+
+<div class="fullscreen-overlay"></div>
+
+
+</body></html>
